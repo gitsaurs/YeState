@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YeState - Luxury Real Estate Redefined</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --gold: #D4AF37;
+            --dark: #0A0E1A;
+            --light: #F8F7F4;
+            --accent: #8B7355;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            cursor: default;
+        }
+        
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+        
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            mix-blend-mode: difference;
+        }
+        
+        .bodoni {
+            font-family: 'Bodoni Moda', serif;
+        }
+        
+        .cormorant {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 14, 26, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #0A0E1A 0%, #1a1f35 50%, #0A0E1A 100%);
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 50%);
+        }
+        
+        .gold-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        
+        /* Property Cards */
+        .property-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .property-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .property-card:hover::before {
+            opacity: 1;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+        }
+        
+        .property-image {
+            position: relative;
+            overflow: hidden;
+            height: 350px;
+        }
+        
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .property-card:hover .property-image img {
+            transform: scale(1.1);
+        }
+        
+        .property-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(10, 14, 26, 0.9) 100%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .property-card:hover .property-overlay {
+            opacity: 1;
+        }
+        
+        /* Stats Counter */
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold) 0%, #F4E4C1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(139, 115, 85, 0.1) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+            background: var(--gold);
+            color: var(--dark);
+            font-weight: 600;
+            transition: all 0.4s;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #F4E4C1 0%, var(--gold) 100%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+        
+        .btn-primary span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            background: transparent;
+            transition: all 0.4s;
+        }
+        
+        .btn-outline:hover {
+            background: var(--gold);
+            color: var(--dark);
+        }
+        
+        /* Parallax */
+        .parallax-section {
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .parallax-bg {
+            position: absolute;
+            inset: -50px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* Filters */
+        .filter-btn {
+            padding: 12px 28px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: transparent;
+            color: var(--light);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--gold);
+            color: var(--dark);
+            border-color: var(--gold);
+        }
+        
+        /* Testimonials */
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 3rem;
+            border-radius: 4px;
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(10, 14, 26, 0.95);
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        /* Grain Texture */
+        .grain {
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 9997;
+        }
+        
+        /* Loading Animation */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--dark);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading-logo {
+            font-size: 5rem;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+    
+    <!-- Grain Texture -->
+    <div class="grain"></div>
+    
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <h1 class="loading-logo bodoni">YeState</h1>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="py-6">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="logo bodoni text-4xl font-bold tracking-wide" style="color: var(--gold);">YeState</div>
+            <div class="hidden md:flex space-x-12 text-sm tracking-widest uppercase">
+                <a href="#home" class="nav-link hover:text-gold transition-colors duration-300">Home</a>
+                <a href="#properties" class="nav-link hover:text-gold transition-colors duration-300">Properties</a>
+                <a href="#about" class="nav-link hover:text-gold transition-colors duration-300">About</a>
+                <a href="#testimonials" class="nav-link hover:text-gold transition-colors duration-300">Testimonials</a>
+                <a href="#contact" class="nav-link hover:text-gold transition-colors duration-300">Contact</a>
+            </div>
+            <button class="btn-primary px-6 py-3 rounded text-sm tracking-wider uppercase">
+                <span>Schedule Viewing</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="relative z-10 h-full flex items-center">
+            <div class="max-w-7xl mx-auto px-6 w-full">
+                <div class="hero-content">
+                    <div class="overflow-hidden mb-4">
+                        <p class="hero-subtitle text-gold tracking-[0.3em] uppercase text-sm mb-6" style="color: var(--gold);">Luxury Living Redefined</p>
+                    </div>
+                    <div class="overflow-hidden mb-6">
+                        <h1 class="hero-title bodoni text-7xl md:text-8xl lg:text-9xl font-bold leading-none mb-6">
+                            Discover Your<br/>Dream Estate
+                        </h1>
+                    </div>
+                    <div class="overflow-hidden mb-12">
+                        <p class="hero-description cormorant text-2xl md:text-3xl text-gray-300 max-w-2xl leading-relaxed">
+                            Curated collection of the world's most exceptional properties, where architectural mastery meets unparalleled luxury.
+                        </p>
+                    </div>
+                    <div class="hero-cta flex gap-6">
+                        <button class="btn-primary px-10 py-5 rounded text-sm tracking-wider uppercase font-semibold">
+                            <span>Explore Collection</span>
+                        </button>
+                        <button class="btn-outline px-10 py-5 rounded text-sm tracking-wider uppercase font-semibold">
+                            Virtual Tours
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-20 left-1/2 transform -translate-x-1/2 scroll-indicator">
+            <div class="w-px h-24 bg-gradient-to-b from-gold to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="stat-item text-center">
+                    <div class="stat-number bodoni" data-count="2500">0</div>
+                    <p class="text-sm tracking-widest uppercase text-gray-400 mt-4">Properties Sold</p>
+                </div>
+                <div class="stat-item text-center">
+                    <div class="stat-number bodoni" data-count="98">0</div>
+                    <p class="text-sm tracking-widest uppercase text-gray-400 mt-4">Client Satisfaction %</p>
+                </div>
+                <div class="stat-item text-center">
+                    <div class="stat-number bodoni" data-count="15">0</div>
+                    <p class="text-sm tracking-widest uppercase text-gray-400 mt-4">Years Experience</p>
+                </div>
+                <div class="stat-item text-center">
+                    <div class="stat-number bodoni" data-count="450">0</div>
+                    <p class="text-sm tracking-widest uppercase text-gray-400 mt-4">Expert Agents</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section id="properties" class="py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <p class="text-gold tracking-[0.3em] uppercase text-sm mb-4" style="color: var(--gold);">Featured Collection</p>
+                <h2 class="bodoni text-6xl md:text-7xl font-bold mb-6">Exclusive Properties</h2>
+                <div class="gold-line w-32 mx-auto mb-8"></div>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-4 mb-16">
+                <button class="filter-btn active" data-filter="all">All Properties</button>
+                <button class="filter-btn" data-filter="villa">Luxury Villas</button>
+                <button class="filter-btn" data-filter="penthouse">Penthouses</button>
+                <button class="filter-btn" data-filter="estate">Private Estates</button>
+                <button class="filter-btn" data-filter="apartment">Apartments</button>
+            </div>
+
+            <div class="properties-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Property 1 -->
+                <div class="property-card" data-category="villa">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=600&fit=crop" alt="Modern Villa">
+                        <div class="property-overlay"></div>
+                        <div class="absolute top-6 right-6 bg-gold text-dark px-4 py-2 text-xs tracking-wider uppercase font-semibold">
+                            Featured
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="cormorant text-3xl font-semibold mb-2">Sunset Villa</h3>
+                                <p class="text-sm text-gray-400 tracking-wide">Beverly Hills, CA</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="bodoni text-3xl font-bold" style="color: var(--gold);">$8.5M</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 text-sm text-gray-400 mb-6">
+                            <span>5 Beds</span>
+                            <span>6 Baths</span>
+                            <span>8,500 sqft</span>
+                        </div>
+                        <button class="w-full btn-outline py-3 rounded text-sm tracking-wider uppercase">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Property 2 -->
+                <div class="property-card" data-category="penthouse">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1567496898669-ee935f5f647a?w=800&h=600&fit=crop" alt="Luxury Penthouse">
+                        <div class="property-overlay"></div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="cormorant text-3xl font-semibold mb-2">Sky Penthouse</h3>
+                                <p class="text-sm text-gray-400 tracking-wide">Manhattan, NY</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="bodoni text-3xl font-bold" style="color: var(--gold);">$12.2M</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 text-sm text-gray-400 mb-6">
+                            <span>4 Beds</span>
+                            <span>5 Baths</span>
+                            <span>6,200 sqft</span>
+                        </div>
+                        <button class="w-full btn-outline py-3 rounded text-sm tracking-wider uppercase">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Property 3 -->
+                <div class="property-card" data-category="estate">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" alt="Private Estate">
+                        <div class="property-overlay"></div>
+                        <div class="absolute top-6 right-6 bg-gold text-dark px-4 py-2 text-xs tracking-wider uppercase font-semibold">
+                            New Listing
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="cormorant text-3xl font-semibold mb-2">Royal Estate</h3>
+                                <p class="text-sm text-gray-400 tracking-wide">Malibu, CA</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="bodoni text-3xl font-bold" style="color: var(--gold);">$15.8M</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 text-sm text-gray-400 mb-6">
+                            <span>7 Beds</span>
+                            <span>8 Baths</span>
+                            <span>12,000 sqft</span>
+                        </div>
+                        <button class="w-full btn-outline py-3 rounded text-sm tracking-wider uppercase">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Property 4 -->
+                <div class="property-card" data-category="villa">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop" alt="Mediterranean Villa">
+                        <div class="property-overlay"></div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="cormorant text-3xl font-semibold mb-2">Mediterranean Pearl</h3>
+                                <p class="text-sm text-gray-400 tracking-wide">Miami Beach, FL</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="bodoni text-3xl font-bold" style="color: var(--gold);">$9.7M</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 text-sm text-gray-400 mb-6">
+                            <span>6 Beds</span>
+                            <span>7 Baths</span>
+                            <span>9,200 sqft</span>
+                        </div>
+                        <button class="w-full btn-outline py-3 rounded text-sm tracking-wider uppercase">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Property 5 -->
+                <div class="property-card" data-category="apartment">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop" alt="Luxury Apartment">
+                        <div class="property-overlay"></div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="cormorant text-3xl font-semibold mb-2">Park Avenue Residence</h3>
+                                <p class="text-sm text-gray-400 tracking-wide">New York, NY</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="bodoni text-3xl font-bold" style="color: var(--gold);">$6.4M</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 text-sm text-gray-400 mb-6">
+                            <span>3 Beds</span>
+                            <span>4 Baths</span>
+                            <span>4,500 sqft</span>
+                        </div>
+                        <button class="w-full btn-outline py-3 rounded text-sm tracking-wider uppercase">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Property 6 -->
+                <div class="property-card" data-category="penthouse">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop" alt="Modern Penthouse">
+                        <div class="property-overlay"></div>
+                        <div class="absolute top-6 right-6 bg-gold text-dark px-4 py-2 text-xs tracking-wider uppercase font-semibold">
+                            Featured
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="cormorant text-3xl font-semibold mb-2">Urban Sanctuary</h3>
+                                <p class="text-sm text-gray-400 tracking-wide">San Francisco, CA</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="bodoni text-3xl font-bold" style="color: var(--gold);">$11.5M</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 text-sm text-gray-400 mb-6">
+                            <span>4 Beds</span>
+                            <span>5 Baths</span>
+                            <span>5,800 sqft</span>
+                        </div>
+                        <button class="w-full btn-outline py-3 rounded text-sm tracking-wider uppercase">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Parallax Section -->
+    <section class="parallax-section my-32">
+        <div class="parallax-bg" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&h=900&fit=crop');"></div>
+        <div class="absolute inset-0 bg-dark bg-opacity-60 flex items-center justify-center">
+            <div class="text-center px-6">
+                <h2 class="bodoni text-6xl md:text-7xl font-bold mb-6">Experience Excellence</h2>
+                <p class="cormorant text-2xl text-gray-300 max-w-2xl mx-auto">
+                    Where timeless architecture meets modern sophistication
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-20 items-center">
+                <div class="about-content">
+                    <p class="text-gold tracking-[0.3em] uppercase text-sm mb-4" style="color: var(--gold);">Our Legacy</p>
+                    <h2 class="bodoni text-6xl font-bold mb-8">Crafting Dreams Into Reality</h2>
+                    <div class="gold-line w-32 mb-8"></div>
+                    <p class="cormorant text-xl text-gray-300 leading-relaxed mb-6">
+                        For over 15 years, YeState has been at the forefront of luxury real estate, connecting discerning clients with extraordinary properties that transcend the ordinary.
+                    </p>
+                    <p class="cormorant text-xl text-gray-300 leading-relaxed mb-8">
+                        Our commitment to excellence, combined with deep market expertise and personalized service, has made us the trusted choice for those seeking the pinnacle of luxury living.
+                    </p>
+                    <button class="btn-primary px-8 py-4 rounded text-sm tracking-wider uppercase">
+                        <span>Our Story</span>
+                    </button>
+                </div>
+                <div class="about-image relative">
+                    <div class="relative z-10">
+                        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=1000&fit=crop" alt="Luxury Interior" class="rounded shadow-2xl">
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 w-full h-full border-2 border-gold rounded"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-32 bg-opacity-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <p class="text-gold tracking-[0.3em] uppercase text-sm mb-4" style="color: var(--gold);">Client Stories</p>
+                <h2 class="bodoni text-6xl md:text-7xl font-bold mb-6">Trusted Excellence</h2>
+                <div class="gold-line w-32 mx-auto"></div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card">
+                    <div class="mb-6">
+                        <svg class="w-12 h-12 text-gold" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+                        </svg>
+                    </div>
+                    <p class="cormorant text-lg text-gray-300 mb-6 leading-relaxed">
+                        YeState helped us find our dream home in Malibu. Their attention to detail and understanding of our needs was exceptional.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gold"></div>
+                        <div>
+                            <p class="font-semibold">Sarah Mitchell</p>
+                            <p class="text-sm text-gray-400">CEO, Tech Innovations</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="mb-6">
+                        <svg class="w-12 h-12 text-gold" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+                        </svg>
+                    </div>
+                    <p class="cormorant text-lg text-gray-300 mb-6 leading-relaxed">
+                        Professional, knowledgeable, and truly dedicated to finding the perfect property. Highly recommend their services.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gold"></div>
+                        <div>
+                            <p class="font-semibold">James Patterson</p>
+                            <p class="text-sm text-gray-400">Investment Banker</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="mb-6">
+                        <svg class="w-12 h-12 text-gold" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+                        </svg>
+                    </div>
+                    <p class="cormorant text-lg text-gray-300 mb-6 leading-relaxed">
+                        From the first viewing to closing, the team at YeState made the entire process seamless and enjoyable.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gold"></div>
+                        <div>
+                            <p class="font-semibold">Emma Roberts</p>
+                            <p class="text-sm text-gray-400">Fashion Designer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="py-32">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="cta-section rounded p-16 text-center">
+                <p class="text-gold tracking-[0.3em] uppercase text-sm mb-4" style="color: var(--gold);">Get In Touch</p>
+                <h2 class="bodoni text-5xl md:text-6xl font-bold mb-6">Begin Your Journey</h2>
+                <p class="cormorant text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                    Let our experts guide you to your perfect property. Schedule a private consultation today.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                    <button class="btn-primary px-10 py-5 rounded text-sm tracking-wider uppercase">
+                        <span>Schedule Consultation</span>
+                    </button>
+                    <button class="btn-outline px-10 py-5 rounded text-sm tracking-wider uppercase">
+                        Contact Us
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <h3 class="bodoni text-3xl font-bold mb-6" style="color: var(--gold);">YeState</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Redefining luxury real estate with exceptional properties and unparalleled service.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 tracking-wider uppercase text-sm">Explore</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-gold transition-colors">Properties</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Services</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Agents</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 tracking-wider uppercase text-sm">Resources</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-gold transition-colors">Market Insights</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Investment Guide</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Testimonials</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">FAQs</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 tracking-wider uppercase text-sm">Connect</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li>contact@yestate.com</li>
+                        <li>+919876543210</li>
+                        <li>Tamilnadu, India</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="gold-line mb-8"></div>
+            <div class="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+                <p>&copy; 2026 YeState. All rights reserved. Designed by Netsaurs</p>
+                <div class="flex gap-8 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-gold transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-gold transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Custom Cursor
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Loading Animation
+        const tl = gsap.timeline();
+        
+        tl.to('.loading-logo', {
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power2.out'
+        })
+        .to('.loading-logo', {
+            scale: 1.2,
+            duration: 0.5,
+            ease: 'power2.inOut'
+        })
+        .to('.loading-screen', {
+            opacity: 0,
+            duration: 0.8,
+            ease: 'power2.inOut',
+            onComplete: () => {
+                document.querySelector('.loading-screen').style.display = 'none';
+                initAnimations();
+            }
+        });
+
+        function initAnimations() {
+            // Hero Animations
+            const heroTl = gsap.timeline();
+            
+            heroTl.from('.hero-subtitle', {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                ease: 'power3.out'
+            })
+            .from('.hero-title', {
+                y: 100,
+                opacity: 0,
+                duration: 1.2,
+                ease: 'power3.out'
+            }, '-=0.6')
+            .from('.hero-description', {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                ease: 'power3.out'
+            }, '-=0.8')
+            .from('.hero-cta button', {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: 'power3.out'
+            }, '-=0.6')
+            .from('.scroll-indicator', {
+                opacity: 0,
+                y: -20,
+                duration: 1,
+                ease: 'power2.out'
+            }, '-=0.4');
+
+            // Scroll Indicator Animation
+            gsap.to('.scroll-indicator', {
+                y: 10,
+                duration: 1.5,
+                repeat: -1,
+                yoyo: true,
+                ease: 'power1.inOut'
+            });
+
+            // Stats Counter Animation
+            const stats = document.querySelectorAll('.stat-item');
+            stats.forEach((stat, index) => {
+                const numberElement = stat.querySelector('.stat-number');
+                const targetNumber = parseInt(numberElement.getAttribute('data-count'));
+
+                gsap.from(stat, {
+                    scrollTrigger: {
+                        trigger: stat,
+                        start: 'top 80%',
+                    },
+                    scale: 0.8,
+                    opacity: 0,
+                    duration: 0.8,
+                    delay: index * 0.1,
+                    ease: 'back.out(1.7)'
+                });
+
+                ScrollTrigger.create({
+                    trigger: stat,
+                    start: 'top 80%',
+                    onEnter: () => {
+                        gsap.to(numberElement, {
+                            innerHTML: targetNumber,
+                            duration: 2,
+                            ease: 'power1.out',
+                            snap: { innerHTML: 1 },
+                            onUpdate: function() {
+                                numberElement.innerHTML = Math.ceil(numberElement.innerHTML);
+                            }
+                        });
+                    },
+                    once: true
+                });
+            });
+
+            // Property Cards Animation
+            gsap.utils.toArray('.property-card').forEach((card, index) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%',
+                    },
+                    y: 80,
+                    opacity: 0,
+                    duration: 1,
+                    delay: (index % 3) * 0.15,
+                    ease: 'power3.out'
+                });
+            });
+
+            // Parallax Effect
+            gsap.to('.parallax-bg', {
+                scrollTrigger: {
+                    trigger: '.parallax-section',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: true
+                },
+                y: -100,
+                ease: 'none'
+            });
+
+            // About Section Animation
+            gsap.from('.about-content', {
+                scrollTrigger: {
+                    trigger: '.about-content',
+                    start: 'top 80%',
+                },
+                x: -80,
+                opacity: 0,
+                duration: 1.2,
+                ease: 'power3.out'
+            });
+
+            gsap.from('.about-image', {
+                scrollTrigger: {
+                    trigger: '.about-image',
+                    start: 'top 80%',
+                },
+                x: 80,
+                opacity: 0,
+                duration: 1.2,
+                ease: 'power3.out'
+            });
+
+            // Testimonials Animation
+            gsap.utils.toArray('.testimonial-card').forEach((card, index) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%',
+                    },
+                    y: 60,
+                    opacity: 0,
+                    duration: 1,
+                    delay: index * 0.2,
+                    ease: 'power3.out'
+                });
+            });
+
+            // CTA Section Animation
+            gsap.from('.cta-section', {
+                scrollTrigger: {
+                    trigger: '.cta-section',
+                    start: 'top 85%',
+                },
+                scale: 0.95,
+                opacity: 0,
+                duration: 1,
+                ease: 'power3.out'
+            });
+
+            // Navigation Scroll Effect
+            let lastScroll = 0;
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                const nav = document.querySelector('nav');
+
+                if (currentScroll > 100) {
+                    nav.style.padding = '1rem 0';
+                    nav.style.background = 'rgba(10, 14, 26, 0.95)';
+                } else {
+                    nav.style.padding = '1.5rem 0';
+                    nav.style.background = 'rgba(10, 14, 26, 0.8)';
+                }
+
+                lastScroll = currentScroll;
+            });
+        }
+
+        // Property Filter
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const propertyCards = document.querySelectorAll('.property-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.getAttribute('data-filter');
+
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                propertyCards.forEach(card => {
+                    const category = card.getAttribute('data-category');
+
+                    if (filter === 'all' || category === filter) {
+                        gsap.to(card, {
+                            opacity: 1,
+                            scale: 1,
+                            duration: 0.5,
+                            ease: 'power2.out',
+                            onStart: () => {
+                                card.style.display = 'block';
+                            }
+                        });
+                    } else {
+                        gsap.to(card, {
+                            opacity: 0,
+                            scale: 0.8,
+                            duration: 0.5,
+                            ease: 'power2.in',
+                            onComplete: () => {
+                                card.style.display = 'none';
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        // Smooth Scroll for Navigation Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Button Hover Effects
+        const buttons = document.querySelectorAll('.btn-primary, .btn-outline');
+        buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                gsap.to(btn, {
+                    scale: 1.05,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, {
+                    scale: 1,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
